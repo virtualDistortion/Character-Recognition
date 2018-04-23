@@ -1,0 +1,2 @@
+model_checkpoint_path: "/tmp/convolutional_neural_network.ckpt"
+all_model_checkpoint_paths: "/tmp/convolutional_neural_network.ckpt"
