@@ -1,2 +1,2 @@
 # Character-Recognition
-Character Recognition Using Machine Learning 
+Handwritten digits recognition using machine learning, more specifically, a convolutional nueral network. 
