@@ -221,7 +221,7 @@ def eval():
     # Create the Estimator
     mnist_classifier = tf.estimator.Estimator(
         #model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model")
-        model_fn=cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/this is crazy/mnist_convnet_model")
+        model_fn=cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
         
 
     """
