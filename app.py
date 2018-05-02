@@ -12,8 +12,8 @@ name = 'Super Awesome Handwritten Numbers Classifier!                           
 
 # load trained model
 classifier = tf.estimator.Estimator(
-#model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model")
-model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
+#model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
 
 def process(img):
     # processes (resize, color, crop, etc) the image  to be sent
@@ -37,6 +37,8 @@ def invert_image(img):
                 img[i,j] = 0              
             elif (img[i,j] == 0):
                 img[i,j] = 1
+            else:
+                img[i,j] = abs(img[i,j] - 1)  
     return img
 
 def draw(h, w, tah):
