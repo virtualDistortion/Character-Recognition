@@ -2,19 +2,29 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from common import Sketcher
-
 import cnn
-
-#create classifier
-mnist_classification = tf.estimator.Estimator(
-        model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
-        #model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+from common import Sketcher
 
 h = 200  # height
 w = h*3  # width
 tah = 25  # text area height
 name = 'Super Awesome Handwritten Numbers Classifier!                              Hey, Kaur! :p'
+
+# load trained model
+classifier = tf.estimator.Estimator(
+#model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model")
+model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+
+def invert_image(img):
+    # inverts image/swaps black and white pixel values
+
+    for i in range(28):
+        for j in range(28):            
+            if (img[i,j] == 1):
+                img[i,j] = 0              
+            elif (img[i,j] == 0):
+                img[i,j] = 1
+    return img
 
 def process(img):
     # processes (resize, color, crop, etc) the image  to be sent
@@ -27,17 +37,6 @@ def process(img):
     inverted = invert_image(resized)
 
     return inverted
-
-def invert_image(img):
-    # inverts image/swaps black and white pixel values
-
-    for i in range(28):
-        for j in range(28):            
-            if (img[i,j] == 1):
-                img[i,j] = 0              
-            elif (img[i,j] == 0):
-                img[i,j] = 1
-    return img
 
 def draw(h, w, tah):
     
@@ -66,7 +65,6 @@ def draw(h, w, tah):
     text4 = "Probablities"
     cv2.putText(canvas, text4, (415, 22), font3, .7, (0, 255, 0), 1)
 
-
     img = canvas.copy()
     sketch = Sketcher(name, [img], lambda: ((0, 255, 0), 255))
 
@@ -81,21 +79,19 @@ def draw(h, w, tah):
 
         if cv2.waitKey(0) == ord('e'):
             # evaluate drawing
-
+            
+            # remove previous results from screen
             cv2.rectangle(img,(202,tah),(400,h+tah),(255,255,255),-1)
-
             cv2.rectangle(img,(404,tah),(600,h+tah),(255,255,255),-1)
 
-            imgarray = process(img)
+            img = process(img)
             
             to_eval = tf.estimator.inputs.numpy_input_fn(
-                x={"x": imgarray},               
-                y=None,
-                shuffle=False)
+                x={"x": imgarray}, y=None, shuffle=False)
                 
             # eval_data = mnist.test.images  # Returns np.array
-            output1 = mnist_classification.predict(input_fn=to_eval)
-            output2 = mnist_classification.predict(input_fn=to_eval)
+            output1 = classifier.predict(input_fn=to_eval)
+            output2 = classifier.predict(input_fn=to_eval)
 
             output_classes = [c['classes'] for c in output1]
             output_prob = [p['probabilities'] for p in output2]
@@ -109,7 +105,6 @@ def draw(h, w, tah):
             sorted_probs = sorted(vals, key=lambda x: x[1])
 
             # print evaluation probabilities
-
             prob1 = str(sorted_probs[-1][0]) + ' = ' + str(sorted_probs[-1][1]) + '%'
             cv2.putText(img, prob1 , (420, 75), font3, .6, (0, 255, 0), 1)
 
@@ -118,7 +113,6 @@ def draw(h, w, tah):
 
             prob2 = str(sorted_probs[-3][0]) + ' = ' + str(sorted_probs[-3][1]) + '%'
             cv2.putText(img, prob2 , (420, 175), font3, .6, (0, 255, 0), 1)
-
 
             # print prediction
             output = str(output_classes)
