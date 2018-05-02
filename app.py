@@ -6,6 +6,11 @@ from common import Sketcher
 
 import cnn
 
+#create classifier
+mnist_classification = tf.estimator.Estimator(
+        model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
+        #model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+
 h = 200  # height
 w = h*3  # width
 tah = 25  # text area height
@@ -84,14 +89,13 @@ def draw(h, w, tah):
             imgarray = process(img)
             
             to_eval = tf.estimator.inputs.numpy_input_fn(
-                x={"x": imgarray},
-                num_epochs=1,
+                x={"x": imgarray},               
                 y=None,
                 shuffle=False)
                 
             # eval_data = mnist.test.images  # Returns np.array
-            output1 = eval().predict(input_fn=to_eval)
-            output2 = eval().predict(input_fn=to_eval)
+            output1 = mnist_classification.predict(input_fn=to_eval)
+            output2 = mnist_classification.predict(input_fn=to_eval)
 
             output_classes = [c['classes'] for c in output1]
             output_prob = [p['probabilities'] for p in output2]
@@ -126,19 +130,6 @@ def draw(h, w, tah):
             break
 
     cv2.destroyAllWindows()
-
-
-# CNN starts here
-tf.logging.set_verbosity(tf.logging.INFO)
-
-def eval():
-
-    # load trained model
-    mnist_classifier = tf.estimator.Estimator(
-        #model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model")
-        model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
-    
-    return mnist_classifier
 
 if __name__ == ("__main__"):
     draw(h, w, tah)
