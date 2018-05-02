@@ -85,10 +85,10 @@ def draw(h, w, tah):
             cv2.rectangle(img,(202,tah),(400,h+tah),(255,255,255),-1)
             cv2.rectangle(img,(404,tah),(600,h+tah),(255,255,255),-1)
 
-            img = process(img)
+            img2 = process(img)
             
             to_eval = tf.estimator.inputs.numpy_input_fn(
-                x={"x": imgarray}, y=None, shuffle=False)
+                x={"x": img2}, y=None, shuffle=False)
                 
             # eval_data = mnist.test.images  # Returns np.array
             output1 = classifier.predict(input_fn=to_eval)
