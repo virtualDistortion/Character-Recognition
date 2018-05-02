@@ -1,6 +1,9 @@
+#Pablo
 import cv2
 import numpy as np
 import tensorflow as tf
+
+from scipy import ndimage
 
 import cnn
 from common import Sketcher
@@ -22,8 +25,11 @@ def process(img):
     crop = img[tah:h, 0:(w//3)]   # crops
     #img2 = crop     # adjusts brightness
     resized = cv2.resize(crop, (28, 28))  # resizes image to 28*28 pixels
-
-    inverted = invert_image(resized)
+    resized = ndimage.gaussian_filter(resized,0.25)
+    ho = ndimage.sobel(resized,0)
+    v = ndimage.sobel(resized,1)
+    inverted = np.hypot(ho,v)
+    #inverted = invert_image(resized)
 
     return inverted
 
@@ -108,13 +114,13 @@ def draw(h, w, tah):
             sorted_probs = sorted(vals, key=lambda x: x[1])
 
             # print evaluation probabilities
-            prob1 = str(sorted_probs[-1][0]) + ' = ' + str(sorted_probs[-1][1]) + '%'
+            prob1 = str(sorted_probs[-1][0]) + ' = ' + str(sorted_probs[-1][1])
             cv2.putText(img, prob1 , (420, 75), font3, .6, (0, 255, 0), 1)
 
-            prob2 = str(sorted_probs[-2][0]) + ' = ' + str(sorted_probs[-2][1]) + '%'
+            prob2 = str(sorted_probs[-2][0]) + ' = ' + str(sorted_probs[-2][1])
             cv2.putText(img, prob2 , (420, 125), font3, .6, (0, 255, 0), 1)
 
-            prob2 = str(sorted_probs[-3][0]) + ' = ' + str(sorted_probs[-3][1]) + '%'
+            prob2 = str(sorted_probs[-3][0]) + ' = ' + str(sorted_probs[-3][1])
             cv2.putText(img, prob2 , (420, 175), font3, .6, (0, 255, 0), 1)
 
             # print prediction
