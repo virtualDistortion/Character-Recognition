@@ -61,7 +61,7 @@ def draw(h, w, tah):
     cv2.putText(canvas, text2, (20, 22), font, 0.9, (0.5, 255, 0), 1)
 
     #middle box
-    text3 = "Predection"
+    text3 = "Prediction"
     cv2.putText(canvas, text3, (220, 22), font3, .7, (0, 255, 0), 1)
 
     #right box
