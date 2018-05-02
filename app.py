@@ -27,6 +27,7 @@ def process(img):
 
     return inverted
 
+
 def invert_image(img):
     # inverts image/swaps black and white pixel values
 
@@ -84,7 +85,7 @@ def draw(h, w, tah):
             cv2.rectangle(img,(202,tah),(400,h+tah),(255,255,255),-1)
             cv2.rectangle(img,(404,tah),(600,h+tah),(255,255,255),-1)
 
-            imgarray = process(img)
+            img = process(img)
             
             to_eval = tf.estimator.inputs.numpy_input_fn(
                 x={"x": imgarray}, y=None, shuffle=False)
