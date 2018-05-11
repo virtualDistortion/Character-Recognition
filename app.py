@@ -15,8 +15,8 @@ name = 'Super Awesome Handwritten Numbers Classifier!                           
 
 # load trained model
 classifier = tf.estimator.Estimator(
-model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
-#model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+#model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
+model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
 
 def process(img):
     # processes (resize, color, crop, etc) the image  to be sent
@@ -68,11 +68,11 @@ def draw(h, w, tah):
 
     #middle box
     text3 = "Prediction"
-    cv2.putText(canvas, text3, (220, 22), font3, .7, (0, 255, 0), 1)
+    cv2.putText(canvas, text3, (240, 22), font3, .7, (0, 255, 0), 1)
 
     #right box
-    text4 = "Probablities"
-    cv2.putText(canvas, text4, (415, 22), font3, .7, (0, 255, 0), 1)
+    text4 = "Confidence"
+    cv2.putText(canvas, text4, (440, 22), font3, .7, (0, 255, 0), 1)
 
     img = canvas.copy()
     sketch = Sketcher(name, [img], lambda: ((0, 255, 0), 255))
@@ -113,16 +113,22 @@ def draw(h, w, tah):
 
             sorted_probs = sorted(vals, key=lambda x: x[1])
 
-            # print evaluation probabilities
-            prob1 = str(sorted_probs[-1][0]) + ' = ' + str(sorted_probs[-1][1])
-            cv2.putText(img, prob1 , (420, 75), font3, .6, (0, 255, 0), 1)
+            
 
+            if sorted_probs[-1][1] >= 0.9:
+                conf = 'Very Confident'
+            elif sorted_probs[-1][1] < 0.9 and sorted_probs[-1][1] >= 0.8:
+                conf = 'Confident'
+            elif sorted_probs[-1][1] < 0.8 and sorted_probs[-1][1] >= 0.65:
+                conf = 'Somewhat Confident'
+            elif sorted_probs[-1][1] < 0.65 :
+                conf = 'Not Confident'
+
+            # print evaluation confidence
             prob2 = str(sorted_probs[-2][0]) + ' = ' + str(sorted_probs[-2][1])
-            cv2.putText(img, prob2 , (420, 125), font3, .6, (0, 255, 0), 1)
+            cv2.putText(img, conf , (430, 115), font3, .6, (0, 255, 0), 1)
 
-            prob2 = str(sorted_probs[-3][0]) + ' = ' + str(sorted_probs[-3][1])
-            cv2.putText(img, prob2 , (420, 175), font3, .6, (0, 255, 0), 1)
-
+            
             # print prediction
             output = str(output_classes)
             cv2.putText(img, str(output[1]), (250, 150), font4, 4, (0, 255, 0), 3)
