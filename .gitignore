@@ -1,0 +1,11 @@
+# Untracked files and directoires:
+
+*.ini
+
+/.vscode
+
+/MNIST-data
+
+/model
+
+/__pycache__
