@@ -1,1 +1,22 @@
-to run the model
+to run the model:
+1) extract files
+2) go to extraxted directoty and open cnn.py
+3) modify line 18, where the model_dir is, to match the respective directory where you have extracted the project
+4) verify that you have:
+	opencv-python 3.4.0.12
+	numpy==1.13.3
+	scipy==1.0.0
+	tensorflow==1.3.0
+	tensorflow-tensorboard==0.1.8
+	
+	All requirements can be install by running and elevated cmd from the directory
+	where the requirements.txt is, and running the command "pip install -r requirements.txt"
+
+5) After gathering all the required libraries you can run the file different ways:
+	1) double click app.py file
+	2) type command: "python app.py"
+	3) if you have VScode you can also load the project and run it there
+6) A window with 3 sections will open up, the left most section is where you'll draw the digit to
+   classify, and then press the key "E" to evaluate your digit.
+	Note: you can write over the whole window but only the left most section will be consider
+	      for classification.
