@@ -15,38 +15,26 @@ name = 'Super Awesome Handwritten Numbers Classifier!                           
 
 # load trained model
 classifier = tf.estimator.Estimator(
-#model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
-model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
+model_fn=cnn.cnn_model_fn, model_dir="D:/OneDrive/2018 Spring Artificial Intelligence/Character-recognition/mnist_convnet_model")
+#model_fn=cnn.cnn_model_fn, model_dir="/Users/Pablo Vargas/Character-Recognition/mnist_convnet_model")
 
 def process(img):
     # processes (resize, color, crop, etc) the image  to be sent
     # to trained model for evaluation
 
     crop = img[tah:h, 0:(w//3)]   # crops
-    #img2 = crop     # adjusts brightness
+    
     resized = cv2.resize(crop, (28, 28))  # resizes image to 28*28 pixels
-    resized = ndimage.gaussian_filter(resized,0.25)
-    ho = ndimage.sobel(resized,0)
-    v = ndimage.sobel(resized,1)
-    inverted = np.hypot(ho,v)
-    #inverted = invert_image(resized)
 
-    return inverted
+    
+    resized = ndimage.gaussian_filter(resized,0.25) #gassian filter with sigma = 0.25
+    ho = ndimage.sobel(resized,0) #horizontal sobel edge detection
+    v = ndimage.sobel(resized,1) # vertical sobel edge detection
+    inverted = np.hypot(ho,v) # combine both edge detection images    
 
+    return inverted #return processed image
 
-def invert_image(img):
-    # inverts image/swaps black and white pixel values
-
-    for i in range(28):
-        for j in range(28):            
-            if (img[i,j] == 1):
-                img[i,j] = 0              
-            elif (img[i,j] == 0):
-                img[i,j] = 1
-            else:
-                img[i,j] = abs(img[i,j] - 1)  
-    return img
-
+#defines drawing space
 def draw(h, w, tah):
     
     canvas = np.ones((h + tah, w), dtype=np.float32)
@@ -93,18 +81,21 @@ def draw(h, w, tah):
             cv2.rectangle(img,(202,tah),(400,h+tah),(255,255,255),-1)
             cv2.rectangle(img,(404,tah),(600,h+tah),(255,255,255),-1)
 
-            img2 = process(img)
+            img2 = process(img) #call process img to apply filtering and edge detection
             
+            #convert image into tensor input
             to_eval = tf.estimator.inputs.numpy_input_fn(
                 x={"x": img2}, y=None, shuffle=False)
                 
-            # eval_data = mnist.test.images  # Returns np.array
+            # evaluate input image,  Returns np.array
             output1 = classifier.predict(input_fn=to_eval)
             output2 = classifier.predict(input_fn=to_eval)
 
+            #extract prediction class and probabilities from classfier
             output_classes = [c['classes'] for c in output1]
             output_prob = [p['probabilities'] for p in output2]
 
+            #sort probabilities
             probs = output_prob[0]
             vals = []
 
@@ -112,9 +103,8 @@ def draw(h, w, tah):
                 vals.append((i, probs[i]))
 
             sorted_probs = sorted(vals, key=lambda x: x[1])
-
             
-
+            #determine confidency level
             if sorted_probs[-1][1] >= 0.9:
                 conf = 'Very Confident'
             elif sorted_probs[-1][1] < 0.9 and sorted_probs[-1][1] >= 0.8:
